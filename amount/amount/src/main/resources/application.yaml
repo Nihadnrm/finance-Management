@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: amount
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/finance_Management
+    username: ${USERNAME}
+    password: ${PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: 8081
+
+jwt:
+  secret: ${JWT_SECRET}
