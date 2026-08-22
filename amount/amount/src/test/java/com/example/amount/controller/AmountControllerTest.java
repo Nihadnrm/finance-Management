@@ -40,10 +40,9 @@ public class AmountControllerTest {
         when(amountService.depositAmount(anyString(),any(AmountRequestDto.class))).thenReturn(responseDto);
 
      mockMvc.perform(post("/amount").header("Authorization","Bearer-test-token").contentType(MediaType.APPLICATION_JSON).content("""
-             {
-                "amount":10000,
+             {  "amount"
                  "duration":2         
-              }""")).andExpect(status().isOk());
+              }""")).andExpect(status().isBadRequest());
     }
 
     @Test

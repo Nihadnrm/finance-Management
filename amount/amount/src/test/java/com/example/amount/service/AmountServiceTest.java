@@ -83,7 +83,7 @@ public class AmountServiceTest {
         when(jwtService.extractUserName(anyString()))
                 .thenReturn("nihad");
 
-        when(repo.existByDuration(dto.getDuration()))
+        when(repo.existsByDuration(dto.getDuration()))
                 .thenReturn(false);
 
         when(amountMapper.toEntity(dto))
@@ -117,7 +117,7 @@ public class AmountServiceTest {
         when(jwtService.extractUserName(anyString()))
                 .thenReturn("nihad");
 
-        when(repo.existByDuration(dto.getDuration()))
+        when(repo.existsByDuration(dto.getDuration()))
                 .thenReturn(true);
 
 
