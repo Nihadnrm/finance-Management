@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class AmountResponseDto {
     private  Long id;
-    private BigDecimal amount;
+    private String amount;
     private LocalDateTime depositDate;
     private int duration;
     private LocalDateTime takeBackDate;
@@ -12,7 +12,7 @@ public class AmountResponseDto {
     public AmountResponseDto() {
     }
 
-    public AmountResponseDto(LocalDateTime takeBackDate, Long id, BigDecimal amount, LocalDateTime depositDate, int duration) {
+    public AmountResponseDto(LocalDateTime takeBackDate, Long id, String amount, LocalDateTime depositDate, int duration) {
         this.takeBackDate = takeBackDate;
         this.id = id;
         this.amount = amount;
@@ -20,11 +20,11 @@ public class AmountResponseDto {
         this.duration = duration;
     }
 
-    public BigDecimal getAmount() {
+    public String getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(String amount) {
         this.amount = amount;
     }
 

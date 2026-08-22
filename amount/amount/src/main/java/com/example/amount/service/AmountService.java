@@ -28,7 +28,7 @@ public class AmountService {
 
     public AmountResponseDto depositAmount(String token, AmountRequestDto dto){
         String UserName=jwtService.extractUserName(token.substring(7));
-        if(repo.existByDuration(dto.getDuration())){
+        if(repo.existsByDuration(dto.getDuration())){
             throw new RuntimeException("this duration you already taken take another");
         }
         Amount amount=amountMapper.toEntity(dto);

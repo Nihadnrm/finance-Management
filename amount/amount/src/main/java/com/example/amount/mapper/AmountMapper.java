@@ -4,11 +4,9 @@ package com.example.amount.mapper;
 import com.example.amount.dto.AmountRequestDto;
 import com.example.amount.dto.AmountResponseDto;
 import com.example.amount.entity.Amount;
-import org.mapstruct.AfterMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,7 +20,13 @@ public interface AmountMapper {
         amount.setTakeBackDate(LocalDateTime.now().plusMonths(dto.getDuration()));
     }
 
+    @Mapping(source ="amount" ,target ="amount" ,qualifiedByName ="addAmountSign" )
     AmountResponseDto toDTO(Amount amount);
+    @Named("addAmountSign")
+    default String addAmountTag(BigDecimal amount){
+        return "₹"+amount;
+    }
+
     List<AmountResponseDto> toListDto(List<Amount>amounts);
 
     @Mapping(target = "id", ignore = true)

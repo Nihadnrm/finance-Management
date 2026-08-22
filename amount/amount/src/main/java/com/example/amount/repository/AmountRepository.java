@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 @Registered
 public interface AmountRepository extends JpaRepository<Amount,Long> {
-    boolean existByDuration(int duration);
+    boolean existsByDuration(int duration);
 }
