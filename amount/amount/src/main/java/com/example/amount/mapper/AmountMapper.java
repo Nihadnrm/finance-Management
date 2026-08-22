@@ -13,12 +13,22 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface AmountMapper {
 
-//    @Mapping(source = "",target=", ignore = true)
+
+
+    @Mapping(target = "takeBackDate",source = "duration",qualifiedByName = "setTakeBackDate")
     Amount toEntity(AmountRequestDto dto);
-    @AfterMapping
-     default void afterMapping(AmountRequestDto dto, @MappingTarget Amount amount){
-        amount.setTakeBackDate(LocalDateTime.now().plusMonths(dto.getDuration()));
+    @Named("setTakeBackDate")
+    default LocalDateTime setTakeBackDate(int duration){
+        return LocalDateTime.now().plusMonths(duration);
     }
+
+   //// we can use qualifiedByName also as afterMapping
+
+//    @AfterMapping()
+//     default void afterMapping(AmountRequestDto dto, @MappingTarget Amount amount){
+//        amount.setTakeBackDate(LocalDateTime.now().plusMonths(dto.getDuration()));
+//    }
+
 
     @Mapping(source ="amount" ,target ="amount" ,qualifiedByName ="addAmountSign" )
     AmountResponseDto toDTO(Amount amount);
@@ -29,14 +39,6 @@ public interface AmountMapper {
 
     List<AmountResponseDto> toListDto(List<Amount>amounts);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "amount",ignore = true)
-    @Mapping(target = "duration",ignore = true)
-    void updateAmount(AmountRequestDto dto, @MappingTarget Amount amount);
-    @AfterMapping
-    default void afterUpdateAmountMapping(AmountRequestDto dto,@MappingTarget Amount amount){
-       amount.setAmount(amount.getAmount().add(dto.getAmount()));
-       amount.setDuration(amount.getDuration()+dto.getDuration());
-    }
+
 
 }
