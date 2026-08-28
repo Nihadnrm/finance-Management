@@ -1,19 +1,21 @@
 package com.example.amount.dto;
 
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import com.example.amount.validation.Common;
+import com.example.amount.validation.Deposit;
+import com.example.amount.validation.UpdateDeposit;
+import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 
 public class AmountRequestDto {
-    @NotNull
-   @DecimalMin("10")
-    @DecimalMax("1000000")
+    @NotNull(groups = Deposit.class)
+   @DecimalMin(value = "10",groups = Common.class)
+    @DecimalMax(value = "100000",groups = Common.class)
     private BigDecimal amount;
-    @NotNull
-    @Size(min = 1,max = 2)
+
+    @NotNull(groups = Deposit.class)
+    @Min(value = 1,groups = Common.class)
+    @Max(value = 12,groups = Common.class)
     private int duration;
 
     public AmountRequestDto() {

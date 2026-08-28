@@ -12,6 +12,11 @@ spring:
       ddl-auto: update
     show-sql: true
 
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=100,expireAfterWrite=5m
+
 server:
   port: 8081
 
