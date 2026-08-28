@@ -7,19 +7,20 @@ import com.example.amount.mapper.AmountMapper;
 import com.example.amount.repository.AmountRepository;
 import com.example.amount.security.JwtService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.springframework.security.authorization.ConditionalAuthorizationManager.when;
 
 @Slf4j
 @Service
 public class AmountService {
     private  final AmountRepository repo;
-    private  final AmountMapper amountMapper;
     private final JwtService jwtService;
+    private  final AmountMapper amountMapper;
 
     public AmountService(AmountMapper amountMapper, AmountRepository repo, JwtService jwtService) {
         this.amountMapper = amountMapper;
@@ -53,19 +54,35 @@ public class AmountService {
         return amountMapper.toDTO(save);
     }
 
+    @Cacheable(value = "amount",key = "'all'")
     public List<AmountResponseDto> showAllDeposits(String token){
         List<Amount>list=repo.findAll();
         return amountMapper.toListDto(list);
 
     }
 
+    @Cacheable(value = "amount",key = "#id")
+    public AmountResponseDto getAmountById(String token,Long id){
+        Amount amount=repo.findById(id).orElseThrow(()->new RuntimeException("amount not found"));
+        return amountMapper.toDTO(amount);
+    }
+
+    @CachePut(value = "amount",key = "#id")
     public AmountResponseDto updateAmount(String token,AmountRequestDto dto,Long id){
         Amount amount=repo.findById(id).orElseThrow(()->new RuntimeException("amount not found"));
-        amount.setAmount(amount.getAmount().add(dto.getAmount()));
+        if(dto.getAmount()!=null){
+            amount.setAmount(amount.getAmount().add(dto.getAmount()));
+        }
         amount.setDuration(amount.getDuration()+dto.getDuration());
         amount.setTakeBackDate(amount.getTakeBackDate().plusMonths(dto.getDuration()));
         Amount update= repo.save(amount);
         return amountMapper.toDTO(update);
 
+    }
+    @CacheEvict(value = "amount",key = "#id")
+    public String deleteAmount(String token,Long id){
+        Amount amount=repo.findById(id).orElseThrow(()->new RuntimeException("amount not fount"));
+        repo.delete(amount);
+        return amount.getId()+" "+"id's" +" "+ "amount is deleted";
     }
 }
