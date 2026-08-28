@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class AmountService {
     }
 
 
+    @CacheEvict(value = "amount",key = "'all'")
     public AmountResponseDto depositAmount(String token, AmountRequestDto dto) {
 
         String userName = jwtService.extractUserName(token.substring(7));
@@ -67,7 +69,9 @@ public class AmountService {
         return amountMapper.toDTO(amount);
     }
 
-    @CachePut(value = "amount",key = "#id")
+//    @CachePut(value = "amount",key = "#id")
+    @Caching(put = @CachePut(value = "amount",key = "#id"),evict = @CacheEvict(value = "amount",key ="'all'"))
+
     public AmountResponseDto updateAmount(String token,AmountRequestDto dto,Long id){
         Amount amount=repo.findById(id).orElseThrow(()->new RuntimeException("amount not found"));
         if(dto.getAmount()!=null){
@@ -79,7 +83,8 @@ public class AmountService {
         return amountMapper.toDTO(update);
 
     }
-    @CacheEvict(value = "amount",key = "#id")
+//    @CacheEvict(value = "amount",key = "#id")
+    @Caching(evict ={ @CacheEvict(value = "amount",key = "#id"),@CacheEvict(value = "amount",key = "'all'")})
     public String deleteAmount(String token,Long id){
         Amount amount=repo.findById(id).orElseThrow(()->new RuntimeException("amount not fount"));
         repo.delete(amount);
