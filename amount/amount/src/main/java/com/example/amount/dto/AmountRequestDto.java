@@ -2,7 +2,6 @@ package com.example.amount.dto;
 
 import com.example.amount.validation.Common;
 import com.example.amount.validation.Deposit;
-import com.example.amount.validation.UpdateDeposit;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;

@@ -8,6 +8,10 @@ import com.example.amount.service.AmountService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -48,8 +52,14 @@ public class AmountControllerTest {
     @Test
     public void showAllDeposits()throws Exception{
         List<AmountResponseDto>responseListDto=new ArrayList<>();
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<AmountResponseDto> responsePage =new PageImpl<>(
+                        responseListDto,
+                        pageable,
+                        responseListDto.size()
+                );
 
-        when(amountService.showAllDeposits(anyString())).thenReturn(responseListDto);
+        when(amountService.showAllDeposits(anyString(),anyInt(),anyInt())).thenReturn(responsePage);
         mockMvc.perform(get("/amount").header("Authorization","Bearer-test-token"))
                 .andExpect(status().isOk());
     }

@@ -13,14 +13,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 
@@ -130,7 +134,7 @@ public class AmountServiceTest {
         // Assert
 
         assertEquals(
-                "this duration you already taken take another",
+                "This duration is already taken",
                 exception.getMessage()
         );
     }
@@ -141,29 +145,46 @@ public class AmountServiceTest {
 
         // Arrange
 
+        int page = 0;
+        int size = 10;
+
+        Pageable pageable = PageRequest.of(page, size);
+
         List<Amount> amountList = new ArrayList<>();
 
-        List<AmountResponseDto> responseList =
-                new ArrayList<>();
+        Page<Amount> amountPage =
+                new PageImpl<>(
+                        amountList,
+                        pageable,
+                        amountList.size()
+                );
 
+        List<AmountResponseDto> responseList = new ArrayList<>();
 
-        when(repo.findAll())
-                .thenReturn(amountList);
+        Page<AmountResponseDto> responsePage =
+                new PageImpl<>(
+                        responseList,
+                        pageable,
+                        responseList.size()
+                );
 
-        when(amountMapper.toListDto(amountList))
-                .thenReturn(responseList);
+        when(repo.findAll(pageable))
+                .thenReturn(amountPage);
+
+        when(amountMapper.toListDto(amountPage))
+                .thenReturn(responsePage);
 
 
         // Act
 
-        List<AmountResponseDto> result =
-                service.showAllDeposits(token);
+        Page<AmountResponseDto> result =
+                service.showAllDeposits(token, page, size);
 
 
         // Assert
 
         assertNotNull(result);
-        assertEquals(responseList, result);
+        assertEquals(responsePage, result);
     }
 
 
@@ -175,6 +196,9 @@ public class AmountServiceTest {
         Long id = 1L;
 
         Amount existingAmount = new Amount();
+        existingAmount.setDuration(12);
+        existingAmount.setTakeBackDate(LocalDateTime.now());
+
 
         Amount updatedAmount = existingAmount;
 
@@ -182,8 +206,6 @@ public class AmountServiceTest {
         when(repo.findById(id))
                 .thenReturn(Optional.of(existingAmount));
 
-        doNothing().when(amountMapper)
-                .updateAmount(dto, existingAmount);
 
         when(repo.save(existingAmount))
                 .thenReturn(updatedAmount);

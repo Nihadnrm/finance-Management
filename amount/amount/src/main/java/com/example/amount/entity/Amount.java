@@ -28,6 +28,7 @@ public class Amount {
     @Column(name = "duration")
     private int duration;
     private LocalDateTime takeBackDate;
+    private Long userId;
 
 //    public Amount() {
 //    }
