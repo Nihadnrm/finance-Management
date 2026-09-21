@@ -92,7 +92,7 @@ public LoginResponseDto refreshAccessToken(RefreshTokenRequestDto dto){
 public String addRoleName(ExtraRoleDto dto){
 AuthUsers authUsers=repo.findByEmail(dto.getEmail()).orElseThrow(()->new RuntimeException("user not found"));
 Role role=roleRepo.findByRoleName(dto.getRoleName()).orElseThrow(()->new RuntimeException("role not found"));
-boolean exist=authUsers.getRole().stream().anyMatch(i->i.getRoleName().equalsIgnoreCase(dto.getRoleName()));
+boolean exist=authUsers.getRole().stream().anyMatch(i->i.getRoleName().equalsIgnoreCase(role.getRoleName()));
 
 if(exist){
     throw new RuntimeException("role already exist");
