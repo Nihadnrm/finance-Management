@@ -16,3 +16,13 @@ server:
 
 jwt:
   secret: ${JWT_SECRET}
+
+recilience4j:
+  circuitbreaker:
+    instances:
+      profileServer:
+        sliding-window-size : 10
+        minimum-number-of-calls : 5
+        failure-rate-threshold : 50
+        wait-duration-in-open-state : 10s
+        permited-number-of-calls-in-half-open-state : 2

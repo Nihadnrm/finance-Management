@@ -9,7 +9,7 @@ import com.example.authentication.exception.DuplicateUserException;
 import com.example.authentication.repository.AuthUsersRepository;
 import com.example.authentication.repository.RoleRepository;
 import com.example.authentication.security.JwtService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.authentication.webclient.ProfileClient;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,19 +17,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class AuthUserService {
-    @Autowired
-    AuthUsersRepository repo;
-    @Autowired
-    RoleRepository roleRepo;
-    @Autowired
-    PasswordEncoder passwordEncoder;
-    @Autowired
-    JwtService jwtService;
-    @Autowired
-    RefreshTokenService refreshTokenService;
+public class AuthUserService {   private final AuthUsersRepository repo;
+    private final RoleRepository roleRepo;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
+    private final ProfileClient profileClient;
 
-public ResponseDto register(RegisterDto dto){
+    public AuthUserService(JwtService jwtService, AuthUsersRepository repo, RoleRepository roleRepo, PasswordEncoder passwordEncoder, RefreshTokenService refreshTokenService, ProfileClient profileClient) {
+        this.jwtService = jwtService;
+        this.repo = repo;
+        this.roleRepo = roleRepo;
+        this.passwordEncoder = passwordEncoder;
+        this.refreshTokenService = refreshTokenService;
+        this.profileClient = profileClient;
+    }
+
+    public ResponseDto register(RegisterDto dto){
    if(repo.existsByEmail(dto.getEmail())){
        throw new DuplicateUserException("user already exists");
    }
@@ -41,6 +45,15 @@ public ResponseDto register(RegisterDto dto){
     authUsers.setRole(List.of(role));
     authUsers.setStatus(Status.ACTIVE);
     AuthUsers save=repo.save(authUsers);
+
+    ProfileRequestDto profileRequestDto=new ProfileRequestDto();
+    profileRequestDto.setProfileName(save.getUserName());
+    profileRequestDto.setEmail(save.getEmail());
+    profileRequestDto.setUserId(save.getId());
+
+    ProfileResponseDto profileResponseDto=profileClient.createProfile(profileRequestDto);
+    System.out.println("profile created");
+
     return new ResponseDto(save.getId(),"user added successfully");
 
 }
