@@ -34,7 +34,7 @@ public class ProfileService {
 
     void  adminRoleCheck(String token){
         List<String>roles=jwtService.extractRoleNames(token.substring(7));
-        if(!roles.contains("admin")){
+        if(!roles.contains("ADMIN")){
             throw  new RuntimeException("role not found");
         }
     }
@@ -99,5 +99,12 @@ public class ProfileService {
         mapper.updateTotal(dto,profile);
         Profile update=repo.save(profile);
         return mapper.toDto(update);
+    }
+
+    public Page<ProfileResponseDto>searchByPName(String token,String pName,int page,int size){
+        adminRoleCheck(token);
+        Pageable pageable=PageRequest.of(page,size);
+        Page<Profile>pages=repo.searchByName(pageable,pName);
+        return mapper.topage(pages);
     }
 }

@@ -36,4 +36,8 @@ public class ProfileController {
     public ProfileResponseDto updateTotal(@RequestHeader("Authorization")String token, @Valid@RequestBody ProfileTotalUpdateDto dto){
     return  service.updateTotal(token,dto);
     }
+    @GetMapping("/searchByPName")
+    public Page<ProfileResponseDto> searchByPName(@RequestHeader("Authorization")String token,@RequestParam String pName,@RequestParam(defaultValue = "0")int page, @RequestParam(defaultValue = "3")int size){
+        return service.searchByPName(token,pName,page,size);
+    }
 }
