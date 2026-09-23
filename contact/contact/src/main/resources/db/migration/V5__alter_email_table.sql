@@ -1,0 +1,1 @@
+alter table email add column myemail varchar(255);
